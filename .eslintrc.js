@@ -6,6 +6,8 @@ module.exports = {
     browser: true,
     commonjs: true,
     es2020: true,
+    node: true,
+    jasmine: true,
   },
   extends: [
     'airbnb-base',

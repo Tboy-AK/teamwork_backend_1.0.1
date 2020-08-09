@@ -1,10 +1,10 @@
 {
   "name": "teamwork_backend",
-  "version": "1.0.0",
-  "description": "## Required Features 1. Admin can create an employee user account. 2. Admin/Employees can sign in. 3. Employees can post gifs. 4. Employees can write and post articles. 5. Employees can edit their articles. 6. Employees can delete their articles. 7. Employees can delete their gifs post. 8. Employees can comment on other colleagues' article post. 9. Employees can comment on other colleagues' gif post. 10. Employees can view all articles and gifs, showing the most recently posted articles or gifs first. 11. Employees can view a specific article. 12. Employees can view a specific gif post.",
+  "version": "1.0.1",
+  "description": "A refactor of my Teamwork API 1.0.0.",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jasmine",
     "start": "node server.js",
     "dev": "nodemon server.js"
   },
@@ -20,7 +20,6 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-validator": "^6.6.1",
-    "jasmine": "^3.6.1",
     "jsonwebtoken": "^8.5.1",
     "multer": "^1.4.2",
     "nodemailer": "^6.4.11",
@@ -30,6 +29,7 @@
   "devDependencies": {
     "eslint": "^7.6.0",
     "eslint-config-airbnb-base": "^14.2.0",
-    "eslint-plugin-import": "^2.22.0"
+    "eslint-plugin-import": "^2.22.0",
+    "jasmine": "^3.6.1"
   }
 }

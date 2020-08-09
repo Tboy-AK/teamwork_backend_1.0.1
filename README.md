@@ -1,5 +1,8 @@
 # Teamwork API
 
+## Description
+Refactor of my [Teamwork API 1.0.0](https://github.com/Tboy-AK/teamwork_backend).
+
 ## Required Features
 1. Admin can create an employee user account.
 2. Admin/Employees can sign in.

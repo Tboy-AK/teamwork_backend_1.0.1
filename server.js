@@ -1,10 +1,17 @@
 const express = require('express');
 require('dotenv').config();
 
+// Require routes
+const { ApiNavRouter } = require('./routes/api-nav-router');
+
 const { urlencoded, json } = express;
 
 const server = express();
 server.use([urlencoded({ extended: true }), json()]);
+
+server.use('/', ApiNavRouter);
+
+// Listen for server daemon
 
 const normalizePort = () => {
   const port = parseInt(process.env.PORT, 10);
