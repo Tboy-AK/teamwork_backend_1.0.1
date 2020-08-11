@@ -1,5 +1,5 @@
 const UserModel = require('../mocks/models/employee-model');
-const { createUser } = require('../controllers/users-controller')(UserModel);
+const { createUser } = require('../controllers/employees-controller')(UserModel);
 
 describe('POST /api/v1.0.1/auth/create-user', () => {
   const res = {

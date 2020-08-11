@@ -10,18 +10,15 @@ const EmployeeModel = {
   createEmployee: (userData) => {
     if (db.auths.find(({ email }) => email === userData.email)) throw new Error('Unique data already exist');
 
-    const newAuth = { email: userData.email, password: userData.password };
-    newAuth._id = db.auths.length + 1;
-    db.auths.push(newAuth);
-
     const newUser = {
       firstName: userData.firstName,
+      password: userData.password,
       lastName: userData.lastName,
       gender: userData.gender,
       address: userData.address,
     };
-    newUser._id = db.users.length + 1;
-    db.users.push(newUser);
+    newUser._id = db.auths.length + 1;
+    db.auths.push(newUser);
 
     const newEmployee = {
       userId: newUser._id,
@@ -34,8 +31,8 @@ const EmployeeModel = {
     return db.employees[db.employees.length - 1];
   },
   makeEmployee: (userData) => {
-    const user = db.users.find(({ email }) => email === userData.email);
-    if (!user) throw new Error('Inexistent relationship');
+    const user = db.auths.find(({ email }) => email === userData.email);
+    if (!user) throw new Error('Non-existent relationship');
 
     const asEmployee = {
       userId: user._id,

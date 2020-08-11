@@ -3,7 +3,7 @@ require('dotenv').config();
 
 // Require routes
 const { ApiNavRouter } = require('./routes/api-nav-router');
-const { UsersRouter } = require('./routes/users-router');
+const { UsersRouter } = require('./routes/employees-router');
 
 const { urlencoded, json } = express;
 

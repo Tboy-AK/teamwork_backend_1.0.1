@@ -3,20 +3,14 @@
     {
       "_id": 1,
       "email": "tboy@gmail.com",
-      "password": "$2a$10$y8WIkP4UHLsYnGnD3dQPH.MrWsu30R65zL0oI9B/JSIqj97Yw8jPK"
-    }
-  ],
-  "users": [
-    {
-      "_id": 1,
-      "email": "tboy@gmail.com",
+      "password": "$2a$10$y8WIkP4UHLsYnGnD3dQPH.MrWsu30R65zL0oI9B/JSIqj97Yw8jPK",
       "firstName": "Tobi",
       "lastName": "Akanji",
       "gender": "male",
-      "address": "CVilla"
+      "address": "C-Villa Resorts"
     }
   ],
-  "admin": [
+  "admins": [
     {
       "_id": 1,
       "user_id": 1

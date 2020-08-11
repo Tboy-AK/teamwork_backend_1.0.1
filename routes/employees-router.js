@@ -1,6 +1,6 @@
 const express = require('express');
 const EmployeeModel = require('../mocks/models/employee-model');
-const { createUser } = require('../controllers/users-controller')(EmployeeModel);
+const { createUser } = require('../controllers/employees-controller')(EmployeeModel);
 const createUserValidator = require('../middleware/validators/create-user-validator');
 
 const UsersRouter = express.Router();
