@@ -3,6 +3,7 @@ require('dotenv').config();
 
 // Require routes
 const { ApiNavRouter } = require('./routes/api-nav-router');
+const { UsersRouter } = require('./routes/users-router');
 
 const { urlencoded, json } = express;
 
@@ -10,9 +11,9 @@ const server = express();
 server.use([urlencoded({ extended: true }), json()]);
 
 server.use('/', ApiNavRouter);
+server.use('/api/v1.0.1', [UsersRouter]);
 
 // Listen for server daemon
-
 const normalizePort = () => {
   const port = parseInt(process.env.PORT, 10);
   if (Number.isNaN(port) && typeof process.env.PORT !== 'undefined') return process.env.PORT;
