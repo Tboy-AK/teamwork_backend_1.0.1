@@ -1,5 +1,5 @@
 const express = require('express');
-const AuthModel = require('../mocks/models/auth-model');
+const AuthModel = require('../models/auths-model');
 const { signinUser } = require('../controllers/auths-controller')(AuthModel);
 const createUserValidator = require('../middleware/validators/signin-user-validator');
 

@@ -2,10 +2,12 @@
 const db = require('../db.json');
 
 const AuthModel = {
-  findByEmail: (userEmail) => {
+  getOneByEmail: (userEmail) => {
     const usersWithEmail = db.auths.find(({ email }) => email === userEmail);
     if (usersWithEmail) return usersWithEmail;
-    throw new Error('Data does not exist');
+    const newErr = new Error('Data does not exist');
+    newErr.code = 'ENULL';
+    throw newErr;
   },
 };
 

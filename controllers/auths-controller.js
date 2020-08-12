@@ -1,9 +1,10 @@
+/* eslint-disable no-underscore-dangle */
 const { compare } = require('bcryptjs');
 const { validationResult } = require('express-validator');
 const { sign } = require('jsonwebtoken');
 const errResHandler = require('../utils/error-response-handler');
 
-const authsController = (UserModel) => {
+const authsController = (AuthModel) => {
   const signinUser = async (req, res) => {
     // validate user request data
     const validationError = validationResult(req);
@@ -11,18 +12,20 @@ const authsController = (UserModel) => {
       return res.status(422).send(validationError.array({ onlyFirstError: true }));
     }
 
-    const reqBody = { ...req.body };
+    const { email, password } = req.body;
 
     // check if user exists
     let user;
     try {
-      user = UserModel.findByEmail(reqBody.email);
+      user = await AuthModel.getOneByEmail(email);
     } catch (err) {
-      return errResHandler(res, 401);
+      if (err.code === 'ENULL') return errResHandler(res, 401, 'User not recognized');
+      if (err.code === 'ECOUNT') return errResHandler(res, 501, err.message);
+      return errResHandler(res, 500, err.message);
     }
 
     // confirm user password
-    return compare(reqBody.password, user.password)
+    return compare(password, user.password)
       .then((success) => {
         if (!success) return errResHandler(res, 401, 'Wrong password');
 
@@ -41,7 +44,7 @@ const authsController = (UserModel) => {
           maxAge: 30 * 24 * 3600000,
           secure: false,
           sameSite: 'none',
-          httpOnly: false,
+          httpOnly: true,
           path: '/api/v1.0.1/auth/refresh-user-session',
           domain: req.hostname !== 'localhost' ? `.${req.hostname}` : 'localhost',
         };
@@ -52,7 +55,7 @@ const authsController = (UserModel) => {
           .cookie('Teamwork', refreshToken, cookieOptions)
           .json({
             message: 'Successfully signed in',
-            userId: 1,
+            userId: user._id,
             accessExp: accessTokenOptions.expiresIn,
             refreshExp: refreshTokenOptions.expiresIn,
           });
