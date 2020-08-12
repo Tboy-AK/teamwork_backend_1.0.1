@@ -7,8 +7,20 @@ const EmployeeModel = {
     if (usersWithEmail) return usersWithEmail;
     throw new Error('Data does not exist');
   },
-  createEmployee: (userData) => {
-    if (db.auths.find(({ email }) => email === userData.email)) throw new Error('Unique data already exist');
+  createEmployee: (...args) => {
+    const userData = {
+      firstName: args[2],
+      password: args[1],
+      lastName: args[3],
+      gender: args[4],
+      address: args[5],
+      email: args[0],
+      jobRole: args[6],
+      department: args[7],
+    };
+    const newErr = new Error('Unique data already exist');
+    newErr.code = '23505';
+    if (db.auths.find(({ email }) => email === userData.email)) throw newErr;
 
     const newUser = {
       firstName: userData.firstName,

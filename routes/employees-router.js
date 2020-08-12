@@ -1,12 +1,12 @@
 const express = require('express');
-const EmployeeModel = require('../mocks/models/employee-model');
-const { createUser } = require('../controllers/employees-controller')(EmployeeModel);
-const createUserValidator = require('../middleware/validators/create-user-validator');
+const EmployeeModel = require('../models/employees-model');
+const { createEmployee } = require('../controllers/employees-controller')(EmployeeModel);
+const createEmployeeValidator = require('../middleware/validators/create-user-validator');
 
 const UsersRouter = express.Router();
 
 UsersRouter
   .route('/auth/create-user')
-  .post(createUserValidator, createUser);
+  .post(createEmployeeValidator, createEmployee);
 
 module.exports = { UsersRouter };
