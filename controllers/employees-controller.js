@@ -9,7 +9,8 @@ const employeesController = (EmployeeModel) => {
     // validate user request data
     const validationError = validationResult(req);
     if (!validationError.isEmpty()) {
-      return errResHandler(res, 422, validationError.array({ onlyFirstError: true }));
+      return errResHandler(res, 422, validationError
+        .array({ onlyFirstError: true }).map(({ msg }) => msg));
     }
 
     // get request data for utilization purposes

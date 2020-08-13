@@ -6,6 +6,7 @@ const { ApiNavRouter } = require('./routes/api-nav-router');
 const { UsersRouter } = require('./routes/employees-router');
 const { AuthsRouter } = require('./routes/auths-router');
 const { ArticlesRouter } = require('./routes/articles-router');
+const { ArticleCommentsRouter } = require('./routes/article-comments-router');
 
 const { urlencoded, json } = express;
 
@@ -13,7 +14,7 @@ const server = express();
 server.use([urlencoded({ extended: true }), json()]);
 
 server.use('/', ApiNavRouter);
-server.use('/api/v1.0.1', [UsersRouter, AuthsRouter, ArticlesRouter]);
+server.use('/api/v1.0.1', [UsersRouter, AuthsRouter, ArticlesRouter, ArticleCommentsRouter]);
 
 // Listen for server daemon
 const normalizePort = () => {

@@ -8,6 +8,7 @@ CREATE SEQUENCE IF NOT EXISTS employees_id_seq;
 CREATE SEQUENCE IF NOT EXISTS categories_id_seq;
 CREATE SEQUENCE IF NOT EXISTS articles_id_seq;
 CREATE SEQUENCE IF NOT EXISTS articles_and_categories_id_seq;
+CREATE SEQUENCE IF NOT EXISTS article_comments_id_seq;
 
 
 -- CREATE FUNCTIONS
@@ -63,6 +64,7 @@ DROP TABLE IF EXISTS employees CASCADE;
 DROP TABLE IF EXISTS categories CASCADE;
 DROP TABLE IF EXISTS articles CASCADE;
 DROP TABLE IF EXISTS articles_and_categories CASCADE;
+DROP TABLE IF EXISTS article_comments CASCADE;
 
 
 -- CREATE TABLES AND TRIGGERS
@@ -351,6 +353,47 @@ CREATE TRIGGER articles_and_categories_timestamp_on_create
   ON PUBLIC.articles_and_categories
   FOR EACH ROW
   EXECUTE PROCEDURE PUBLIC.timestamp_on_create();
+
+
+CREATE TABLE IF NOT EXISTS article_comments (
+  _id INTEGER GENERATED ALWAYS AS IDENTITY,
+  "comment" TEXT COLLATE pg_catalog."default" NOT NULL,
+  auth_id INTEGER NOT NULL,
+  article_id INTEGER NOT NULL,
+  _v INTEGER DEFAULT 1 NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL,
+  modified_at TIMESTAMPTZ NOT NULL,
+  CONSTRAINT article_comments_pkey PRIMARY KEY (_id),
+  CONSTRAINT article_comments_auth_id_fkey FOREIGN KEY (auth_id)
+    REFERENCES PUBLIC.auths (_id) MATCH SIMPLE
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
+  CONSTRAINT article_comments_article_id_fkey FOREIGN KEY (article_id)
+    REFERENCES PUBLIC.articles (_id) MATCH SIMPLE
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
+COMMENT ON TABLE PUBLIC.article_comments
+  IS 'Table where comments on article are kept';
+
+CREATE TRIGGER article_comments_timestamp_on_create
+  BEFORE INSERT
+  ON PUBLIC.article_comments
+  FOR EACH ROW
+  EXECUTE PROCEDURE PUBLIC.timestamp_on_create();
+
+CREATE TRIGGER article_comments_timestamp_on_modify
+  BEFORE INSERT OR UPDATE
+  ON PUBLIC.article_comments
+  FOR EACH ROW
+  EXECUTE PROCEDURE PUBLIC.timestamp_on_modify();
+
+CREATE TRIGGER article_comments_row_version_on_modify
+  BEFORE UPDATE
+  ON PUBLIC.article_comments
+  FOR EACH ROW
+  EXECUTE PROCEDURE PUBLIC.row_version_on_modify();
 
 
 -- INSERT INTO TABLES

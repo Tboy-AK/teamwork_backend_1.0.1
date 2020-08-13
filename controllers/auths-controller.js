@@ -9,7 +9,8 @@ const authsController = (AuthModel) => {
     // validate user request data
     const validationError = validationResult(req);
     if (!validationError.isEmpty()) {
-      return res.status(422).send(validationError.array({ onlyFirstError: true }));
+      return res.status(422).send(validationError
+        .array({ onlyFirstError: true }).map(({ msg }) => msg));
     }
 
     const { email, password } = req.body;

@@ -6,13 +6,17 @@ const ArticleModel = class {
    * @description Create new article
    * @typedef args List of article details
    * @type {Array}
-   * @param {String} title Article title
-   * @param {String} article Article content
-   * @param {Number} auth_id Author's ID
+   * @param {Number} article_id Article ID
+   * @param {String} comment Comment content
+   * @param {Number} auth_id Author ID
    */
-  static async createArticle(...args) {
-    const queryString = `INSERT INTO articles(title, article, auth_id)
-    VALUES ($1, $2, $3) RETURNING *;`;
+  static async createComment(...args) {
+    const queryString = `WITH newComment AS (
+      INSERT INTO article_comments("comment", article_id, auth_id)
+      VALUES ($2, $1, $3) RETURNING *
+    ) SELECT newComment.*, title, article
+    FROM newComment
+    INNER JOIN articles ON newComment.article_id=articles._id;`;
     try {
       const newArticle = await pool.query(queryString, args);
       return Promise.resolve(newArticle.rows[0]);
@@ -23,17 +27,20 @@ const ArticleModel = class {
 
   /**
    *
-   * @description Update article
+   * @description Update comment
    * @typedef args List of article details
    * @type {Array}
-   * @param {Number} _id Article's first name
-   * @param {String} title Article title
-   * @param {String} article Article content
-   * @param {Number} auth_id Author's ID
+   * @param {Number} _id Comment ID
+   * @param {String} comment Comment content
+   * @param {Number} auth_id Author ID
    */
-  static async updateArticle(...args) {
-    const queryString = `UPDATE articles SET title=$2, article=$3
-    WHERE _id=$1 AND auth_id=$4 RETURNING *;`;
+  static async updateComment(...args) {
+    const queryString = `WITH newComment AS (
+      UPDATE article_comments SET comment=$2
+      WHERE _id=$1 AND auth_id=$3 AND article_id=$4 RETURNING *
+    ) SELECT newComment.*, title, article
+    FROM newComment
+    INNER JOIN articles ON newComment.article_id=articles._id;`;
     try {
       const newArticle = await pool.query(queryString, args);
       if (newArticle.rowCount === 0) {
@@ -43,21 +50,22 @@ const ArticleModel = class {
       }
       return Promise.resolve(newArticle.rows[0]);
     } catch (err) {
+      console.error(err);
       return Promise.reject(err);
     }
   }
 
   /**
    *
-   * @description Delete article
+   * @description Delete comment
    * @typedef args List of article details
    * @type {Array}
-   * @param {Number} _id Article's ID
+   * @param {Number} _id Comment ID
    * @param {Number} auth_id Employee's ID
    */
-  static async deleteArticle(...args) {
-    const queryString = `DELETE FROM articles
-    WHERE _id=$1 AND auth_id=$2 RETURNING _id;`;
+  static async deleteComment(...args) {
+    const queryString = `DELETE FROM article_comments
+    WHERE _id=$1 AND auth_id=$2 AND article_id=$3 RETURNING _id;`;
     try {
       const newArticle = await pool.query(queryString, args);
       if (newArticle.rowCount === 0) {

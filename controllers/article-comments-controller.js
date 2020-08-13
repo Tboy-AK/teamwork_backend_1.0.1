@@ -2,8 +2,8 @@
 const { validationResult } = require('express-validator');
 const errResHandler = require('../utils/error-response-handler');
 
-const articlesController = (ArticleModel) => {
-  const createArticle = async (req, res) => {
+const articlesController = (ArticleCommentModel) => {
+  const createComment = async (req, res) => {
     // validate user request data
     const validationError = validationResult(req);
     if (!validationError.isEmpty()) {
@@ -11,11 +11,12 @@ const articlesController = (ArticleModel) => {
         .array({ onlyFirstError: true }).map(({ msg }) => msg));
     }
 
-    // save article to database
-    let newArticle;
+    // save comment to database
+    let newComment;
     try {
-      const { title, article } = req.body;
-      newArticle = await ArticleModel.createArticle(title, article, req.userPayload.uid);
+      newComment = await ArticleCommentModel.createComment(
+        req.params.articleId, req.body.comment, req.userPayload.uid,
+      );
     } catch (err) {
       if (err.code === '23000' || err.code === '23503') return errResHandler(res, 403, 'Unauthorized request');
       return errResHandler(res, 500, err.message);
@@ -24,15 +25,17 @@ const articlesController = (ArticleModel) => {
     return res
       .status(201)
       .json({
-        message: 'Article successfully posted',
-        articleId: newArticle._id,
-        title: newArticle.title,
-        article: newArticle.article,
-        createdOn: newArticle.created_at,
+        message: 'Comment successfully posted',
+        commentId: newComment._id,
+        comment: newComment.comment,
+        articleId: newComment.article_id,
+        articleTitle: newComment.title,
+        article: newComment.article,
+        createdOn: newComment.created_at,
       });
   };
 
-  const updateArticle = async (req, res) => {
+  const updateComment = async (req, res) => {
     // validate user request data
     const validationError = validationResult(req);
     if (!validationError.isEmpty()) {
@@ -40,12 +43,12 @@ const articlesController = (ArticleModel) => {
         .array({ onlyFirstError: true }).map(({ msg }) => msg));
     }
 
-    // save article update to database
-    let newArticle;
+    // save comment update to database
+    let updatedComment;
+    const { articleId, commentId } = req.params;
     try {
-      const { title, article } = req.body;
-      newArticle = await ArticleModel.updateArticle(
-        req.params.articleId, title, article, req.userPayload.uid,
+      updatedComment = await ArticleCommentModel.updateComment(
+        commentId, req.body.comment, req.userPayload.uid, articleId,
       );
     } catch (err) {
       if (err.code === '23000' || err.code === '23503') return errResHandler(res, 403, 'Unauthorized request');
@@ -56,16 +59,18 @@ const articlesController = (ArticleModel) => {
     return res
       .status(201)
       .json({
-        message: 'Article successfully updated',
-        articleId: newArticle._id,
-        title: newArticle.title,
-        article: newArticle.article,
-        createdOn: newArticle.created_at,
-        updatedOn: newArticle.modified_at,
+        message: 'Comment successfully updated',
+        commentId: updatedComment._id,
+        comment: updatedComment.comment,
+        articleId: updatedComment.article_id,
+        articleTitle: updatedComment.title,
+        article: updatedComment.article,
+        createdOn: updatedComment.created_at,
+        updatedOn: updatedComment.modified_at,
       });
   };
 
-  const deleteArticle = async (req, res) => {
+  const deleteComment = async (req, res) => {
     // validate user request data
     const validationError = validationResult(req);
     if (!validationError.isEmpty()) {
@@ -74,18 +79,18 @@ const articlesController = (ArticleModel) => {
     }
 
     // delete article from database
+    const { articleId, commentId } = req.params;
     try {
-      await ArticleModel.deleteArticle(
-        req.params.articleId, req.userPayload.uid,
-      );
-      return res.status(200).send('Article successfully deleted');
+      await ArticleCommentModel
+        .deleteComment(commentId, req.userPayload.uid, articleId);
+      return res.status(200).send('Comment successfully deleted');
     } catch (err) {
       if (err.code === 'ENULL') return errResHandler(res, 403, 'Unauthorized request');
       return errResHandler(res, 500, err.message);
     }
   };
 
-  return { createArticle, updateArticle, deleteArticle };
+  return { createComment, updateComment, deleteComment };
 };
 
 module.exports = articlesController;
