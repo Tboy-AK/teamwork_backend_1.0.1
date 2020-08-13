@@ -63,7 +63,26 @@ const articlesController = (ArticleModel) => {
       });
   };
 
-  return { createArticle, updateArticle };
+  const deleteArticle = async (req, res) => {
+    // validate user request data
+    const validationError = validationResult(req);
+    if (!validationError.isEmpty()) {
+      return errResHandler(res, 422, validationError.array({ onlyFirstError: true }));
+    }
+
+    // delete article from database
+    try {
+      await ArticleModel.deleteArticle(
+        req.params.articleId, req.userPayload.uid,
+      );
+      return res.status(200).send('Article successfully deleted');
+    } catch (err) {
+      if (err.code === 'ENULL') return errResHandler(res, 403, 'Unauthorized request');
+      return errResHandler(res, 500, err.message);
+    }
+  };
+
+  return { createArticle, updateArticle, deleteArticle };
 };
 
 module.exports = articlesController;

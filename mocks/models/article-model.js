@@ -59,6 +59,29 @@ const ArticleModel = {
 
     return db.articles.find(({ _id }) => _id === articleData._id);
   },
+  deleteArticle: (...args) => {
+    if (!db.auths.find(({ _id }) => _id === args[1])) {
+      const newErr = new Error('Related data does not exist');
+      newErr.code = 'ENULL';
+      throw newErr;
+    }
+
+    const articleData = {
+      _id: args[0],
+      auth_id: args[1],
+    };
+
+    const requestedArticleList = db.articles
+      .filter(({ _id }) => _id === articleData._id);
+
+    if (!requestedArticleList || requestedArticleList.length === 0) {
+      const newErr = new Error('Article not found');
+      newErr.code = 'ENULL';
+      throw newErr;
+    }
+
+    return db.articles.splice(articleData._id, 1);
+  },
 };
 
 module.exports = ArticleModel;

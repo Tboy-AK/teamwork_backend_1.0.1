@@ -1,7 +1,7 @@
 const ArticleModel = require('../mocks/models/article-model');
-const { updateArticle } = require('../controllers/articles-controller')(ArticleModel);
+const { deleteArticle } = require('../controllers/articles-controller')(ArticleModel);
 
-describe('PATCH /api/v1.0.1/articles/:articleId', () => {
+describe('DELETE /api/v1.0.1/articles/:articleID', () => {
   const res = {
     status: (statusCode) => ({ statusCode, ...res }),
     json: ({ message, userId }) => ({ message, userId, ...res }),
@@ -16,34 +16,23 @@ describe('PATCH /api/v1.0.1/articles/:articleId', () => {
       params: {
         articleId: 1,
       },
-      body: {
-        title: 'The Subject Matter',
-        article: 'The body of the article, that is, the actual article content',
-      },
     };
 
     let resStatusSpy;
-    let resJsonSpy;
+    let resSendSpy;
     beforeAll(async (done) => {
       resStatusSpy = spyOn(res, 'status').and.callThrough();
-      resJsonSpy = spyOn(res, 'json');
-      await updateArticle(req, res);
+      resSendSpy = spyOn(res, 'send');
+      await deleteArticle(req, res);
       done();
     });
 
-    it('responds status 201', async (done) => {
-      expect(resStatusSpy).toHaveBeenCalledWith(201);
+    it('responds status 200', async (done) => {
+      expect(resStatusSpy).toHaveBeenCalledWith(200);
       done();
     });
-    it('returns a json response', async (done) => {
-      expect(resJsonSpy).toHaveBeenCalledWith({
-        message: 'Article successfully updated',
-        articleId: 1,
-        title: req.body.title,
-        article: req.body.article,
-        createdOn: '12-08-2020T11:42:43.890Z',
-        updatedOn: new Date().toLocaleDateString(),
-      });
+    it('responds a success message', async (done) => {
+      expect(resSendSpy).toHaveBeenCalledWith('Article successfully deleted');
       done();
     });
   });
@@ -56,10 +45,6 @@ describe('PATCH /api/v1.0.1/articles/:articleId', () => {
       params: {
         articleId: 1,
       },
-      body: {
-        title: 'The Subject Matter',
-        article: 'The body of the article, that is, the actual article content',
-      },
     };
 
     let resStatusSpy;
@@ -67,7 +52,7 @@ describe('PATCH /api/v1.0.1/articles/:articleId', () => {
     beforeAll(async (done) => {
       resStatusSpy = spyOn(res, 'status').and.callThrough();
       resSendSpy = spyOn(res, 'send');
-      await updateArticle(req, res);
+      await deleteArticle(req, res);
       done();
     });
 
@@ -89,10 +74,6 @@ describe('PATCH /api/v1.0.1/articles/:articleId', () => {
       params: {
         articleId: 0,
       },
-      body: {
-        title: 'The Subject Matter',
-        article: 'The body of the article, that is, the actual article content',
-      },
     };
 
     let resStatusSpy;
@@ -100,16 +81,16 @@ describe('PATCH /api/v1.0.1/articles/:articleId', () => {
     beforeAll(async (done) => {
       resStatusSpy = spyOn(res, 'status').and.callThrough();
       resSendSpy = spyOn(res, 'send');
-      await updateArticle(req, res);
+      await deleteArticle(req, res);
       done();
     });
 
-    it('responds failure status 406', async (done) => {
-      expect(resStatusSpy).toHaveBeenCalledWith(406);
+    it('responds failure status 403', async (done) => {
+      expect(resStatusSpy).toHaveBeenCalledWith(403);
       done();
     });
     it('returns failure message', async (done) => {
-      expect(resSendSpy).toHaveBeenCalledWith('Article not found');
+      expect(resSendSpy).toHaveBeenCalledWith('Unauthorized request');
       done();
     });
   });
