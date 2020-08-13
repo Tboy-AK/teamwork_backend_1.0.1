@@ -26,21 +26,21 @@ const EmployeeModel = {
     }
 
     const newUser = {
+      _id: db.auths.length + 1,
       firstName: userData.firstName,
       password: userData.password,
       lastName: userData.lastName,
       gender: userData.gender,
       address: userData.address,
     };
-    newUser._id = db.auths.length + 1;
     db.auths.push(newUser);
 
     const newEmployee = {
+      _id: db.employees.length + 1,
       userId: newUser._id,
       jobRole: userData.jobRole,
       department: userData.department,
     };
-    newEmployee._id = db.employees.length + 1;
     db.employees.push(newEmployee);
 
     return db.employees[db.employees.length - 1];
@@ -50,11 +50,11 @@ const EmployeeModel = {
     if (!user) throw new Error('Non-existent relationship');
 
     const asEmployee = {
+      _id: db.employees.length + 1,
       userId: user._id,
       jobRole: userData.jobRole,
       department: userData.department,
     };
-    asEmployee._id = db.employees.length + 1;
     db.employees.push(asEmployee);
 
     return db.employees[db.employees.length - 1];

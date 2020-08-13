@@ -22,8 +22,11 @@ module.exports = (res, status = 500, message) => {
       case 404:
         errMessage = 'Resource not found';
         break;
+      case 406:
+        errMessage = 'Non-conforming data cannot be processed';
+        break;
       case 422:
-        errMessage = 'Invalid user input';
+        errMessage = 'Invalid request parameters';
         break;
       case 501:
         errMessage = 'Service not implemented';

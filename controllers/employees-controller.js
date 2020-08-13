@@ -13,7 +13,7 @@ const employeesController = (EmployeeModel) => {
     }
 
     // get request data for utilization purposes
-    const reqBody = { ...req.body };
+    const reqBody = req.body;
 
     // hash user password
     return hash(reqBody.password, genSaltSync(10))

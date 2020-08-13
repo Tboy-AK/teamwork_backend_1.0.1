@@ -5,6 +5,9 @@ CREATE SEQUENCE IF NOT EXISTS auths_id_seq;
 CREATE SEQUENCE IF NOT EXISTS job_roles_id_seq;
 CREATE SEQUENCE IF NOT EXISTS departments_id_seq;
 CREATE SEQUENCE IF NOT EXISTS employees_id_seq;
+CREATE SEQUENCE IF NOT EXISTS categories_id_seq;
+CREATE SEQUENCE IF NOT EXISTS articles_id_seq;
+CREATE SEQUENCE IF NOT EXISTS articles_and_categories_id_seq;
 
 
 -- CREATE FUNCTIONS
@@ -57,6 +60,9 @@ DROP TABLE IF EXISTS auths CASCADE;
 DROP TABLE IF EXISTS job_roles CASCADE;
 DROP TABLE IF EXISTS departments CASCADE;
 DROP TABLE IF EXISTS employees CASCADE;
+DROP TABLE IF EXISTS categories CASCADE;
+DROP TABLE IF EXISTS articles CASCADE;
+DROP TABLE IF EXISTS articles_and_categories CASCADE;
 
 
 -- CREATE TABLES AND TRIGGERS
@@ -108,7 +114,7 @@ CREATE TABLE IF NOT EXISTS auths (
   modified_at TIMESTAMPTZ NOT NULL,
   CONSTRAINT auths_pkey PRIMARY KEY (_id),
   CONSTRAINT auths_email_key UNIQUE (email),
-  CONSTRAINT employees_gender_id_fkey FOREIGN KEY (gender_id)
+  CONSTRAINT auths_gender_id_fkey FOREIGN KEY (gender_id)
     REFERENCES PUBLIC.genders (_id) MATCH SIMPLE
     ON UPDATE CASCADE
     ON DELETE CASCADE
@@ -248,6 +254,103 @@ CREATE TRIGGER employees_row_version_on_modify
   ON PUBLIC.employees
   FOR EACH ROW
   EXECUTE PROCEDURE PUBLIC.row_version_on_modify();
+  
+
+CREATE TABLE IF NOT EXISTS categories (
+  _id INTEGER GENERATED ALWAYS AS IDENTITY,
+  name CHARACTER VARYING (10) COLLATE pg_catalog."default" NOT NULL,
+  _desc TEXT COLLATE pg_catalog."default",
+  _v INTEGER DEFAULT 1 NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL,
+  modified_at TIMESTAMPTZ NOT NULL,
+  CONSTRAINT categories_pkey PRIMARY KEY (_id),
+  CONSTRAINT categories_name_key UNIQUE (name)
+);
+
+COMMENT ON TABLE PUBLIC.categories
+  IS 'Table where article categories are referenced from';
+
+CREATE TRIGGER categories_timestamp_on_create
+  BEFORE INSERT
+  ON PUBLIC.categories
+  FOR EACH ROW
+  EXECUTE PROCEDURE PUBLIC.timestamp_on_create();
+
+CREATE TRIGGER categories_timestamp_on_modify
+  BEFORE INSERT OR UPDATE
+  ON PUBLIC.categories
+  FOR EACH ROW
+  EXECUTE PROCEDURE PUBLIC.timestamp_on_modify();
+
+CREATE TRIGGER categories_row_version_on_modify
+  BEFORE UPDATE
+  ON PUBLIC.categories
+  FOR EACH ROW
+  EXECUTE PROCEDURE PUBLIC.row_version_on_modify();
+
+
+CREATE TABLE IF NOT EXISTS articles (
+  _id INTEGER GENERATED ALWAYS AS IDENTITY,
+  title CHARACTER VARYING (100) COLLATE pg_catalog."default",
+  article TEXT COLLATE pg_catalog."default" NOT NULL,
+  auth_id INTEGER NOT NULL,
+  _v INTEGER DEFAULT 1 NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL,
+  modified_at TIMESTAMPTZ NOT NULL,
+  CONSTRAINT articles_pkey PRIMARY KEY (_id),
+  CONSTRAINT articles_auth_id_fkey FOREIGN KEY (auth_id)
+    REFERENCES PUBLIC.auths (_id) MATCH SIMPLE
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
+COMMENT ON TABLE PUBLIC.articles
+  IS 'Table where articles are kept';
+
+CREATE TRIGGER articles_timestamp_on_create
+  BEFORE INSERT
+  ON PUBLIC.articles
+  FOR EACH ROW
+  EXECUTE PROCEDURE PUBLIC.timestamp_on_create();
+
+CREATE TRIGGER articles_timestamp_on_modify
+  BEFORE INSERT OR UPDATE
+  ON PUBLIC.articles
+  FOR EACH ROW
+  EXECUTE PROCEDURE PUBLIC.timestamp_on_modify();
+
+CREATE TRIGGER articles_row_version_on_modify
+  BEFORE UPDATE
+  ON PUBLIC.articles
+  FOR EACH ROW
+  EXECUTE PROCEDURE PUBLIC.row_version_on_modify();
+  
+
+CREATE TABLE IF NOT EXISTS articles_and_categories (
+  _id INTEGER GENERATED ALWAYS AS IDENTITY,
+  article_id INTEGER NOT NULL,
+  category_id INTEGER NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL,
+  modified_at TIMESTAMPTZ NOT NULL,
+  CONSTRAINT articles_and_categories_pkey PRIMARY KEY (_id),
+  CONSTRAINT articles_and_categories_article_id_fkey FOREIGN KEY (article_id)
+    REFERENCES PUBLIC.articles (_id) MATCH SIMPLE
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
+  CONSTRAINT articles_and_categories_category_id_fkey FOREIGN KEY (category_id)
+    REFERENCES PUBLIC.categories (_id) MATCH SIMPLE
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
+COMMENT ON TABLE PUBLIC.articles_and_categories
+  IS 'Table that references articles to their categories';
+
+CREATE TRIGGER articles_and_categories_timestamp_on_create
+  BEFORE INSERT
+  ON PUBLIC.articles_and_categories
+  FOR EACH ROW
+  EXECUTE PROCEDURE PUBLIC.timestamp_on_create();
 
 
 -- INSERT INTO TABLES

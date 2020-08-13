@@ -3,7 +3,7 @@ const pool = require('../configs/db-config');
 const EmployeeModel = class {
   /**
    * @description Register a new employee
-   * @typedef args Employee details
+   * @typedef args List of employee details
    * @type {Array}
    * @param {String} email Employee's email
    * @param {String} password Employee's hashed password
