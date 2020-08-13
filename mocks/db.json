@@ -13,13 +13,13 @@
   "admins": [
     {
       "_id": 1,
-      "user_id": 1
+      "auth_id": 1
     }
   ],
   "employees": [
     {
       "_id": 1,
-      "user_id": 1,
+      "auth_id": 1,
       "jobRole": "CTO",
       "department": "Software"
     }
@@ -34,11 +34,17 @@
   "articles": [
     {
       "_id": 1,
-      "user_id": 1,
+      "auth_id": 1,
       "title": "Knock! Knock!!",
       "article": "Knock! Knock!! Who's there? It's me. Me who? Ask your JWT!!!",
-      "category_id": 1,
       "created_at": "12-08-2020T11:42:43.890Z"
+    }
+  ],
+  "categories_and_categories": [
+    {
+      "_id": 1,
+      "article_id": 1,
+      "category_id": 1
     }
   ]
 }
