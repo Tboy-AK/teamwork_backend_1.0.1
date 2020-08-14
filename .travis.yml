@@ -5,3 +5,12 @@ cache: npm
 env:
   global:
     - NODE_ENV=test
+deploy:
+  - cleanup: false
+    provider: heroku
+    api_key:
+      secure: Eji9f7a9TrmNcip6VEZyFnyHYjKuN4JrnOfYQbuCmdYv/50NCjrbiKON6yzr3Ub00q4oFgUARlDhQqJlJvtr3nollJzWbQFR0gOB28yUL+l7KXr9cZJbX3jKf33Sj3VDisE9s3T5qf/FXgo+2FrnC9FRHoeGS+fnBsMDEBuy+B6Tt32+hAWnRv0L5aridkqxmIMfdTf56lPZPBLl96YwzNvpfT5DrBgSgCD1tVIU0GcTJb5ARcTzv83RPIRkVWIMna2nojLfHUD+gU0vrhqxU8pBO883TVi0cc4BIUUdx9+otzVLUk0ZgkbEKEm0hKLGzCxa5VYQWBonIvcn838okGDhNeAUAhLJ/MMOcXCUicm6oCym7qshUiJ+fXt/yZTitOe/tej36/1GoSoLBRNJbsJe77ixHW4Oc0lSKNPIBe2H7AXmmJ2lYNMol7RTIWD/9reJoaQiHX2h76uiOHeWiCje2611vav3WP38gUkg18+9lJfL6n2LomcaZ3Yjr8gl5ViC92Galebcvq/o0pAr0j/80fZrVnMroDkm1yF8UJhMJLUNTYSTeIuRNBxRVzkBIUWdUXey7zSAhtWrHWaG4BKAI9Pn/875OVI0cRU3PlS6YRVNaW7inkRlRaTaOt3A7K4/KjJ9ww4GRWfU5gSpKI9kMS3iMA5jdMn0ILoNuLo=
+    app: teamwork-api-develop
+    on:
+      repo: Tboy-AK/teamwork_backend_1.0.1
+      branch: develop
