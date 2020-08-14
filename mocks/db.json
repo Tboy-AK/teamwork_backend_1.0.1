@@ -1,0 +1,50 @@
+{
+  "auths": [
+    {
+      "_id": 1,
+      "email": "tboy@gmail.com",
+      "password": "$2a$10$y8WIkP4UHLsYnGnD3dQPH.MrWsu30R65zL0oI9B/JSIqj97Yw8jPK",
+      "firstName": "Tobi",
+      "lastName": "Akanji",
+      "gender": "male",
+      "address": "C-Villa Resorts"
+    }
+  ],
+  "admins": [
+    {
+      "_id": 1,
+      "auth_id": 1
+    }
+  ],
+  "employees": [
+    {
+      "_id": 1,
+      "auth_id": 1,
+      "jobRole": "CTO",
+      "department": "Software"
+    }
+  ],
+  "categories": [
+    {
+      "_id": 1,
+      "name": "comedy",
+      "_desc": "Funny articles for the laughter."
+    }
+  ],
+  "articles": [
+    {
+      "_id": 1,
+      "auth_id": 1,
+      "title": "Knock! Knock!!",
+      "article": "Knock! Knock!! Who's there? It's me. Me who? Ask your JWT!!!",
+      "created_at": "12-08-2020T11:42:43.890Z"
+    }
+  ],
+  "categories_and_categories": [
+    {
+      "_id": 1,
+      "article_id": 1,
+      "category_id": 1
+    }
+  ]
+}

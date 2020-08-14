@@ -277,3 +277,8 @@ Refactor of my [Teamwork API 1.0.0](https://github.com/Tboy-AK/teamwork_backend)
       ]
     }
    }
+
+## Optional Features
+1. Employees can view all articles that belong to a category (tag).
+2. Employees can flag a comment, article and/or gif as inappropriate.
+3. Admin can delete a comment, article and/or gif flagged as inappropriate.
