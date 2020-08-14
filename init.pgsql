@@ -9,6 +9,9 @@ CREATE SEQUENCE IF NOT EXISTS categories_id_seq;
 CREATE SEQUENCE IF NOT EXISTS articles_id_seq;
 CREATE SEQUENCE IF NOT EXISTS articles_and_categories_id_seq;
 CREATE SEQUENCE IF NOT EXISTS article_comments_id_seq;
+CREATE SEQUENCE IF NOT EXISTS gifs_id_seq;
+CREATE SEQUENCE IF NOT EXISTS gifs_and_categories_id_seq;
+CREATE SEQUENCE IF NOT EXISTS gif_comments_id_seq;
 
 
 -- CREATE FUNCTIONS
@@ -65,6 +68,9 @@ DROP TABLE IF EXISTS categories CASCADE;
 DROP TABLE IF EXISTS articles CASCADE;
 DROP TABLE IF EXISTS articles_and_categories CASCADE;
 DROP TABLE IF EXISTS article_comments CASCADE;
+DROP TABLE IF EXISTS gifs CASCADE;
+DROP TABLE IF EXISTS gifs_and_categories CASCADE;
+DROP TABLE IF EXISTS gif_comments CASCADE;
 
 
 -- CREATE TABLES AND TRIGGERS
@@ -392,6 +398,111 @@ CREATE TRIGGER article_comments_timestamp_on_modify
 CREATE TRIGGER article_comments_row_version_on_modify
   BEFORE UPDATE
   ON PUBLIC.article_comments
+  FOR EACH ROW
+  EXECUTE PROCEDURE PUBLIC.row_version_on_modify();
+
+
+CREATE TABLE IF NOT EXISTS gifs (
+  _id INTEGER GENERATED ALWAYS AS IDENTITY,
+  title CHARACTER VARYING (100) COLLATE pg_catalog."default",
+  image_url CHARACTER VARYING (256)  COLLATE pg_catalog."default" NOT NULL,
+  auth_id INTEGER NOT NULL,
+  _v INTEGER DEFAULT 1 NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL,
+  modified_at TIMESTAMPTZ NOT NULL,
+  CONSTRAINT gifs_pkey PRIMARY KEY (_id),
+  CONSTRAINT gifs_auth_id_fkey FOREIGN KEY (auth_id)
+    REFERENCES PUBLIC.auths (_id) MATCH SIMPLE
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
+COMMENT ON TABLE PUBLIC.gifs
+  IS 'Table where gif Cloudinary URLs are kept';
+
+CREATE TRIGGER gifs_timestamp_on_create
+  BEFORE INSERT
+  ON PUBLIC.gifs
+  FOR EACH ROW
+  EXECUTE PROCEDURE PUBLIC.timestamp_on_create();
+
+CREATE TRIGGER gifs_timestamp_on_modify
+  BEFORE INSERT OR UPDATE
+  ON PUBLIC.gifs
+  FOR EACH ROW
+  EXECUTE PROCEDURE PUBLIC.timestamp_on_modify();
+
+CREATE TRIGGER gifs_row_version_on_modify
+  BEFORE UPDATE
+  ON PUBLIC.gifs
+  FOR EACH ROW
+  EXECUTE PROCEDURE PUBLIC.row_version_on_modify();
+  
+
+CREATE TABLE IF NOT EXISTS gifs_and_categories (
+  _id INTEGER GENERATED ALWAYS AS IDENTITY,
+  gif_id INTEGER NOT NULL,
+  category_id INTEGER NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL,
+  modified_at TIMESTAMPTZ NOT NULL,
+  CONSTRAINT gifs_and_categories_pkey PRIMARY KEY (_id),
+  CONSTRAINT gifs_and_categories_gif_id_fkey FOREIGN KEY (gif_id)
+    REFERENCES PUBLIC.gifs (_id) MATCH SIMPLE
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
+  CONSTRAINT gifs_and_categories_category_id_fkey FOREIGN KEY (category_id)
+    REFERENCES PUBLIC.categories (_id) MATCH SIMPLE
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
+COMMENT ON TABLE PUBLIC.gifs_and_categories
+  IS 'Table that references gifs to their categories';
+
+CREATE TRIGGER gifs_and_categories_timestamp_on_create
+  BEFORE INSERT
+  ON PUBLIC.gifs_and_categories
+  FOR EACH ROW
+  EXECUTE PROCEDURE PUBLIC.timestamp_on_create();
+
+
+CREATE TABLE IF NOT EXISTS gif_comments (
+  _id INTEGER GENERATED ALWAYS AS IDENTITY,
+  "comment" TEXT COLLATE pg_catalog."default" NOT NULL,
+  auth_id INTEGER NOT NULL,
+  gif_id INTEGER NOT NULL,
+  _v INTEGER DEFAULT 1 NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL,
+  modified_at TIMESTAMPTZ NOT NULL,
+  CONSTRAINT gif_comments_pkey PRIMARY KEY (_id),
+  CONSTRAINT gif_comments_auth_id_fkey FOREIGN KEY (auth_id)
+    REFERENCES PUBLIC.auths (_id) MATCH SIMPLE
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
+  CONSTRAINT gif_comments_gif_id_fkey FOREIGN KEY (gif_id)
+    REFERENCES PUBLIC.gifs (_id) MATCH SIMPLE
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
+COMMENT ON TABLE PUBLIC.gif_comments
+  IS 'Table where comments on gif are kept';
+
+CREATE TRIGGER gif_comments_timestamp_on_create
+  BEFORE INSERT
+  ON PUBLIC.gif_comments
+  FOR EACH ROW
+  EXECUTE PROCEDURE PUBLIC.timestamp_on_create();
+
+CREATE TRIGGER gif_comments_timestamp_on_modify
+  BEFORE INSERT OR UPDATE
+  ON PUBLIC.gif_comments
+  FOR EACH ROW
+  EXECUTE PROCEDURE PUBLIC.timestamp_on_modify();
+
+CREATE TRIGGER gif_comments_row_version_on_modify
+  BEFORE UPDATE
+  ON PUBLIC.gif_comments
   FOR EACH ROW
   EXECUTE PROCEDURE PUBLIC.row_version_on_modify();
 
