@@ -70,6 +70,49 @@ const ArticleModel = class {
       return Promise.reject(err);
     }
   }
+
+  /**
+   *
+   * @description Delete article
+   * @typedef args List of article details
+   * @type {Array}
+   * @param {Number} _id Article's ID
+   * @param {Number} auth_id Employee's ID
+   */
+  static async getArticle(...args) {
+    const queryString = `SELECT articles.*, auths.first_name, auths.last_name, (
+      SELECT COALESCE(
+        JSON_AGG(
+          JSON_BUILD_OBJECT(
+            '_id', article_comments._id, 
+            'comment', article_comments.comment,
+            'created_at', article_comments.created_at,
+            'auth_id', article_comments.auth_id,
+            'first_name', auths.first_name,
+            'last_name', auths.last_name
+          ) ORDER BY article_comments.created_at DESC
+        ),
+        '[]'
+      ) FROM article_comments
+      INNER JOIN auths ON article_comments.auth_id=auths._id
+      WHERE article_comments.article_id = $1
+      AND article_comments._id IS NOT NULL
+    ) all_comments
+    FROM articles
+    INNER JOIN auths ON articles.auth_id=auths._id
+    WHERE articles._id=$1;`;
+    try {
+      const foundArticle = await pool.query(queryString, args);
+      if (foundArticle.rowCount === 0) {
+        const newErr = new Error('Article not found');
+        newErr.code = 'ENULL';
+        throw newErr;
+      }
+      return Promise.resolve(foundArticle.rows[0]);
+    } catch (err) {
+      return Promise.reject(err);
+    }
+  }
 };
 
 module.exports = ArticleModel;

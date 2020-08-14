@@ -50,7 +50,6 @@ const ArticleModel = class {
       }
       return Promise.resolve(newArticle.rows[0]);
     } catch (err) {
-      console.error(err);
       return Promise.reject(err);
     }
   }
